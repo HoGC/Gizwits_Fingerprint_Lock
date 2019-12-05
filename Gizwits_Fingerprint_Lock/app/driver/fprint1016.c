@@ -133,7 +133,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 					INFO("[ERROR]Get Image error\r\n");
 					fp_led_set(LED_COLOR_YELLOW,LED_ON);
 					os_timer_arm(&OS_Timer_LedClose,500,0);
-					os_timer_arm(&OS_Timer_Wakeup,30,1);
 				}
 				break;
 			case CMD_GENERATE:	//生成特征
@@ -145,7 +144,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 				}else
 				{
 					INFO("[ERROR]Generate error\r\n");
-					os_timer_arm(&OS_Timer_Wakeup,30,1);
 				}
 				
 				break;			
@@ -166,7 +164,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 					fprintStatus.id = 255;
 				}
 				os_timer_arm(&OS_Timer_LedClose,500,0);
-				os_timer_arm(&OS_Timer_Wakeup,30,1);
 				if(user_fprint_hender != NULL){
 					user_fprint_hender(fprintStatus);
 				}
@@ -198,7 +195,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 				break;			
 			default:
 				INFO("[ERROR]Unknow error\r\n");
-				os_timer_arm(&OS_Timer_Wakeup,30,1);
 				break;
 			}
 		}
@@ -237,7 +233,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 				}else
 				{
 					INFO("[ERROR]Get Image error\r\n");
-					os_timer_arm(&OS_Timer_Wakeup,30,1);
 				}
 				break;
 			case CMD_GENERATE:	//生成特征
@@ -251,13 +246,11 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 					}else
 					{
 						fp_led_set(LED_COLOR_CYAN,LED_ON);
-						os_timer_arm(&OS_Timer_Wakeup,30,1);
 					}
 					
 				}else
 				{
 					INFO("[ERROR]Generate error\r\n");
-					os_timer_arm(&OS_Timer_Wakeup,30,1);
 				}
 				
 				break;				
@@ -285,7 +278,6 @@ void uart_rx_cb(uint8* pData_buf, uint16 data_len) {
 					fprintStatus.id = fprintID;
 					fprintID=0;
 					fp_led_set(LED_COLOR_GREEN,LED_ON);
-					os_timer_arm(&OS_Timer_Wakeup,30,1);
 					os_timer_arm(&OS_Timer_LedClose,1000,0);
 					fp_verify();
 					if(user_fprint_hender != NULL){
@@ -331,7 +323,6 @@ void ICACHE_FLASH_ATTR wakeupHandle() {
 	{
 		Key_State = 0;	//更新历史状态
 		INFO("[INFO]Finger press\r\n");
-		os_timer_disarm(&OS_Timer_Wakeup);
 		fp_led_set(LED_COLOR_BLUE,LED_ON);
 		os_delay_us(50000);
 		send_cmd(CMD_GET_IMAGE, 0, NULL);
@@ -340,7 +331,6 @@ void ICACHE_FLASH_ATTR wakeupHandle() {
 	else if (Key_State==0 && Key_press==0)
 	{
 		Key_State=1;
-		os_timer_arm(&OS_Timer_Wakeup,30,1);	
 	}
 }
 
